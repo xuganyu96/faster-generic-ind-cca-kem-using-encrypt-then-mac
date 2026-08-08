@@ -28,7 +28,7 @@ REF_HEADERS = $(KYBER_REF)/params.h \
 			  $(KYBER_REF)/symmetric.h \
 			  $(KYBER_REF)/fips202.h
 
-AVX2_CFLAGS = -mavx2 -mbmi2 -mpopcnt -march=native -mtune=native
+AVX2_CFLAGS = -mavx2 -mbmi2 -mpopcnt -march=native -mtune=native -Ipqcrystals-kyber/avx2 -Ipqcrystals-kyber/avx2/keccak4x
 KYBER_AVX2 = pqcrystals-kyber/avx2
 AVX2_SOURCES = $(KYBER_AVX2)/kem.c \
 			   $(KYBER_AVX2)/indcpa.c \
@@ -67,13 +67,32 @@ AVX2_HEADERS = $(KYBER_AVX2)/params.h \
 			   $(KYBER_AVX2)/fips202.h \
 			   $(KYBER_AVX2)/fips202x4.h
 
-all: \
+.PHONY: ref avx2 clean
+
+ref: \
 	tests/test_kem_512_ref.out \
 	tests/test_kem_768_ref.out \
 	tests/test_kem_1024_ref.out \
 	tests/speed_kem_512_ref.out \
 	tests/speed_kem_768_ref.out \
 	tests/speed_kem_1024_ref.out
+
+avx2: \
+	tests/test_kem_512_avx2.out \
+	tests/test_kem_768_avx2.out \
+	tests/test_kem_1024_avx2.out \
+	tests/speed_kem_512_avx2.out \
+	tests/speed_kem_768_avx2.out \
+	tests/speed_kem_1024_avx2.out
+
+tests/test_kem_512_ref.out: $(REF_SOURCES) $(REF_HEADERS) src/etmkem.c tests/test_kem.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -DKYBER_K=2 $(REF_SOURCES) -lcrypto src/etmkem.c tests/test_kem.c -o $@
+
+tests/test_kem_768_ref.out: $(REF_SOURCES) $(REF_HEADERS) src/etmkem.c tests/test_kem.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -DKYBER_K=3 $(REF_SOURCES) -lcrypto src/etmkem.c tests/test_kem.c -o $@
+
+tests/test_kem_1024_ref.out: $(REF_SOURCES) $(REF_HEADERS) src/etmkem.c tests/test_kem.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -DKYBER_K=4 $(REF_SOURCES) -lcrypto src/etmkem.c tests/test_kem.c -o $@
 
 tests/speed_kem_512_ref.out: $(REF_SOURCES) $(REF_HEADERS) src/etmkem.c tests/speed_kem.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -DKYBER_K=2 $(REF_SOURCES) -lcrypto src/etmkem.c tests/speed_kem.c -o $@
@@ -93,17 +112,26 @@ $(KYBER_AVX2)/keccak4x/KeccakP-1600-times4-SIMD256.o: \
   $(KYBER_AVX2)/keccak4x/KeccakP-brg_endian.h
 	$(CC) $(CFLAGS) $(AVX2_CFLAGS) -c $< -o $@
 
-tests/test_kem_512_ref.out: $(REF_SOURCES) $(REF_HEADERS) src/etmkem.c tests/test_kem.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -DKYBER_K=2 $(REF_SOURCES) -lcrypto src/etmkem.c tests/test_kem.c -o $@
+tests/test_kem_512_avx2.out: $(AVX2_SOURCES) $(AVX2_HEADERS) src/etmkem.c tests/test_kem.c
+	$(CC) $(CFLAGS) $(AVX2_CFLAGS) $(LDFLAGS) -DKYBER_K=2 $(AVX2_SOURCES) -lcrypto -DUSE_AVX2 src/etmkem.c tests/test_kem.c -o $@
 
-tests/test_kem_768_ref.out: $(REF_SOURCES) $(REF_HEADERS) src/etmkem.c tests/test_kem.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -DKYBER_K=3 $(REF_SOURCES) -lcrypto src/etmkem.c tests/test_kem.c -o $@
+tests/test_kem_768_avx2.out: $(AVX2_SOURCES) $(AVX2_HEADERS) src/etmkem.c tests/test_kem.c
+	$(CC) $(CFLAGS) $(AVX2_CFLAGS) $(LDFLAGS) -DKYBER_K=3 $(AVX2_SOURCES) -lcrypto -DUSE_AVX2 src/etmkem.c tests/test_kem.c -o $@
 
-tests/test_kem_1024_ref.out: $(REF_SOURCES) $(REF_HEADERS) src/etmkem.c tests/test_kem.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -DKYBER_K=4 $(REF_SOURCES) -lcrypto src/etmkem.c tests/test_kem.c -o $@
+tests/test_kem_1024_avx2.out: $(AVX2_SOURCES) $(AVX2_HEADERS) src/etmkem.c tests/test_kem.c
+	$(CC) $(CFLAGS) $(AVX2_CFLAGS) $(LDFLAGS) -DKYBER_K=4 $(AVX2_SOURCES) -lcrypto -DUSE_AVX2 src/etmkem.c tests/test_kem.c -o $@
+
+tests/speed_kem_512_avx2.out: $(AVX2_SOURCES) $(AVX2_HEADERS) src/etmkem.c tests/speed_kem.c
+	$(CC) $(CFLAGS) $(AVX2_CFLAGS) $(LDFLAGS) -DKYBER_K=2 $(AVX2_SOURCES) -lcrypto -DUSE_AVX2 src/etmkem.c tests/speed_kem.c -o $@
+
+tests/speed_kem_768_avx2.out: $(AVX2_SOURCES) $(AVX2_HEADERS) src/etmkem.c tests/speed_kem.c
+	$(CC) $(CFLAGS) $(AVX2_CFLAGS) $(LDFLAGS) -DKYBER_K=3 $(AVX2_SOURCES) -lcrypto -DUSE_AVX2 src/etmkem.c tests/speed_kem.c -o $@
+
+tests/speed_kem_1024_avx2.out: $(AVX2_SOURCES) $(AVX2_HEADERS) src/etmkem.c tests/speed_kem.c
+	$(CC) $(CFLAGS) $(AVX2_CFLAGS) $(LDFLAGS) -DKYBER_K=4 $(AVX2_SOURCES) -lcrypto -DUSE_AVX2 src/etmkem.c tests/speed_kem.c -o $@
 
 clean:
-	rm -f tests/test_kem_512_ref.out
-	rm -f tests/test_kem_768_ref.out
-	rm -f tests/test_kem_1024_ref.out
+	rm -f tests/test_kem_512_ref.out tests/test_kem_768_ref.out tests/test_kem_1024_ref.out
 	rm -f tests/speed_kem_512_ref.out tests/speed_kem_768_ref.out tests/speed_kem_1024_ref.out
+	rm -f tests/test_kem_512_avx2.out tests/test_kem_768_avx2.out tests/test_kem_1024_avx2.out
+	rm -f tests/speed_kem_512_avx2.out tests/speed_kem_768_avx2.out tests/speed_kem_1024_avx2.out

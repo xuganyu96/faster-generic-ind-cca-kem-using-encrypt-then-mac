@@ -17,8 +17,6 @@
 #include <time.h>
 #endif
 
-#include "pqcrystals-kyber/ref/kem.h"
-#include "pqcrystals-kyber/ref/params.h"
 #include "pqqs26/pqqs26.h"
 
 #define DEFAULT_EPOCHS 10U
@@ -147,6 +145,9 @@ static void benchmark(const char *name, benchmark_fn function,
     unsigned int i;
     uint64_t start, end;
 
+    /* Prime caches and one-time initialization without including it in the
+     * reported duration. */
+    (void)function(data);
     start = timer_read();
     for (i = 0; i < rounds; ++i)
         (void)function(data);

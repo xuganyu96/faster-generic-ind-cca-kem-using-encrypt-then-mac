@@ -87,8 +87,9 @@ int PQQS26_ETM_crypto_kem_dec(uint8_t *ss, const uint8_t *ct,
     uint8_t tmp[KYBER_SYMBYTES + KYBER_MACBYTES];
     uint8_t tmp1[KYBER_SYMBYTES + CRYPTO_CIPHERTEXTBYTES];
 
-#if defined(__x86_64__)
+#if defined(__x86_64__) && defined(USE_AVX2)
     ALIGNED_UINT8(KYBER_CIPHERTEXTBYTES) cmp;
+    (void) cmp;
 #endif /* __x86_64__ */
     // const uint8_t *pk = sk + KYBER_INDCPA_SECRETKEYBYTES;
 
@@ -127,8 +128,9 @@ int PQQS26_TCH_crypto_kem_dec(uint8_t *ss, const uint8_t *ct,
     uint8_t tag[KYBER_SYMBYTES] = {0};
     uint8_t tmp[KYBER_SYMBYTES + KYBER_CIPHERTEXTBYTES];
 
-#if defined(__x86_64__)
+#if defined(__x86_64__) && defined(USE_AVX2)
     ALIGNED_UINT8(KYBER_CIPHERTEXTBYTES) cmp;
+    (void)cmp;
 #endif /* __x86_64__ */
     // const uint8_t *pk = sk + KYBER_INDCPA_SECRETKEYBYTES;
 

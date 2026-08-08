@@ -5,7 +5,13 @@
 #include <stdint.h>
 #include <string.h>
 
-#if defined(__x86_64__)
+#if defined(__x86_64__) && defined(USE_AVX2)
+#include "pqcrystals-kyber/avx2/fips202.h"
+#include "pqcrystals-kyber/avx2/indcpa.h"
+#include "pqcrystals-kyber/avx2/kem.h"
+#include "pqcrystals-kyber/avx2/params.h"
+#include "pqcrystals-kyber/avx2/randombytes.h"
+#include "pqcrystals-kyber/avx2/symmetric.h"
 #else
 #include "pqcrystals-kyber/ref/fips202.h"
 #include "pqcrystals-kyber/ref/indcpa.h"
