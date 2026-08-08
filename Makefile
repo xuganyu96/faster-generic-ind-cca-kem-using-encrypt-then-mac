@@ -70,7 +70,19 @@ AVX2_HEADERS = $(KYBER_AVX2)/params.h \
 all: \
 	tests/test_kem_512_ref.out \
 	tests/test_kem_768_ref.out \
-	tests/test_kem_1024_ref.out
+	tests/test_kem_1024_ref.out \
+	tests/speed_kem_512_ref.out \
+	tests/speed_kem_768_ref.out \
+	tests/speed_kem_1024_ref.out
+
+tests/speed_kem_512_ref.out: $(REF_SOURCES) $(REF_HEADERS) src/etmkem.c tests/speed_kem.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -DKYBER_K=2 $(REF_SOURCES) -lcrypto src/etmkem.c tests/speed_kem.c -o $@
+
+tests/speed_kem_768_ref.out: $(REF_SOURCES) $(REF_HEADERS) src/etmkem.c tests/speed_kem.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -DKYBER_K=3 $(REF_SOURCES) -lcrypto src/etmkem.c tests/speed_kem.c -o $@
+
+tests/speed_kem_1024_ref.out: $(REF_SOURCES) $(REF_HEADERS) src/etmkem.c tests/speed_kem.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -DKYBER_K=4 $(REF_SOURCES) -lcrypto src/etmkem.c tests/speed_kem.c -o $@
 
 $(KYBER_AVX2)/keccak4x/KeccakP-1600-times4-SIMD256.o: \
   $(KYBER_AVX2)/keccak4x/KeccakP-1600-times4-SIMD256.c \
@@ -94,3 +106,4 @@ clean:
 	rm -f tests/test_kem_512_ref.out
 	rm -f tests/test_kem_768_ref.out
 	rm -f tests/test_kem_1024_ref.out
+	rm -f tests/speed_kem_512_ref.out tests/speed_kem_768_ref.out tests/speed_kem_1024_ref.out
