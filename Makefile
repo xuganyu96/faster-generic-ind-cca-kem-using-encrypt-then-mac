@@ -131,7 +131,15 @@ tests/speed_kem_1024_avx2.out: $(AVX2_SOURCES) $(AVX2_HEADERS) src/etmkem.c test
 	$(CC) $(CFLAGS) $(AVX2_CFLAGS) $(LDFLAGS) -DKYBER_K=4 $(AVX2_SOURCES) -lcrypto -DUSE_AVX2 src/etmkem.c tests/speed_kem.c -o $@
 
 clean:
-	rm -f tests/test_kem_512_ref.out tests/test_kem_768_ref.out tests/test_kem_1024_ref.out
-	rm -f tests/speed_kem_512_ref.out tests/speed_kem_768_ref.out tests/speed_kem_1024_ref.out
-	rm -f tests/test_kem_512_avx2.out tests/test_kem_768_avx2.out tests/test_kem_1024_avx2.out
-	rm -f tests/speed_kem_512_avx2.out tests/speed_kem_768_avx2.out tests/speed_kem_1024_avx2.out
+	rm -f tests/test_kem_512_ref.out \
+		  tests/test_kem_768_ref.out \
+		  tests/test_kem_1024_ref.out \
+		  tests/speed_kem_512_ref.out \
+		  tests/speed_kem_768_ref.out \
+		  tests/speed_kem_1024_ref.out \
+		  tests/test_kem_512_avx2.out \
+		  tests/test_kem_768_avx2.out \
+		  tests/test_kem_1024_avx2.out \
+		  tests/speed_kem_512_avx2.out \
+		  tests/speed_kem_768_avx2.out \
+		  tests/speed_kem_1024_avx2.out
