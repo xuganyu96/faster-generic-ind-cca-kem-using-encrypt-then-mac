@@ -92,3 +92,18 @@ CC: gcc version 15.3.1 20260722 (Red Hat 15.3.1-1) (GCC)
 | Kyber1024 | kyber/dec     | RDTSCP |      10 | 40241.40 | 40557.06 | 1200.67 | 39387.97 | 42891.36 |
 | Kyber1024 | etm/dec       | RDTSCP |      10 |  4287.99 |  4369.29 |  135.44 |  4275.08 |  4691.33 |
 | Kyber1024 | tch/dec       | RDTSCP |      10 | 11919.49 | 12112.02 |  344.98 | 11868.39 | 12873.55 |
+
+## Troubleshooting
+
+### OpenSSL
+
+This implementation relies on OpenSSL for Poly1305. Where OpenSSL is not
+automatically available, we recommend exporting CFLAGS and LDFLAGS so that the
+compiler can find the appropriate header and link to libcrypto.
+
+```bash
+# For example on MacOS with OpenSSL installed from Homebrew
+export OPENSSL_PATH="/opt/homebrew/Cellar/openssl@3/3.x.y"
+export CFLAGS="-I${OPENSSL_PATH}/include"
+export LDFLAGS="-L${OPENSSL_PATH}/lib"
+```
